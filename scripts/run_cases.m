@@ -1,4 +1,4 @@
-% Author: Ricardo Baptista and Matthias Poloczek
+    % Author: Ricardo Baptista and Matthias Poloczek
 % Date:   June 2018
 %
 % See LICENSE.md for copyright information

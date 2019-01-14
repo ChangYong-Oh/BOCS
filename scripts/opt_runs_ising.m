@@ -27,23 +27,24 @@
 % parameter.
 
 clear; close all; clc
-addpath(genpath('../algorithms'))
-addpath(genpath('../stat_model'))
-addpath(genpath('../test_problems/IsingModel'))
-addpath(genpath('../tools'))
+current_file_dir = strsplit(mfilename('fullpath'), '/');
+addpath(strcat(['/', strjoin([current_file_dir(2:end-2), 'algorithms'], '/')]));
+addpath(strcat(['/', strjoin([current_file_dir(2:end-2), 'stat_model'], '/')]));
+addpath(strcat(['/', strjoin([current_file_dir(2:end-2), 'test_problems', 'IsingModel'], '/')]));
+addpath(strcat(['/', strjoin([current_file_dir(2:end-2), 'tools'], '/')]));
 
 %% Setup parameters
 
 % Setup fixed parameters
 n_nodes = 16;
-n_vars  = 24;
+% n_vars  = 24;
 n_proc  = 1;
 test_name = 'ising';
 
 % Number of runs and optimization iterations
-n_func     = 10;
-n_runs     = 10;
-n_init     = 20;
+% n_func     = 5;
+% n_runs     = 5;
+% n_init     = 20;
 evalBudget = 170;
 
 % Variance prior parameters (Inverse Gamma)
@@ -51,13 +52,29 @@ aPr    = 2;
 bPr    = 1;
 
 % Regularization parameters
-lambda_vals = [0, 1e-4, 1e-2, 1];
-lambda_str  = {'0', '1em4', '1em2', '1'};
+lambda_vals = [0, 1e-4, 1e-2];
+lambda_str  = {'0', '1em4', '1em2'};
 
 % Set additive regularization function
 reg_term = @(x) sum(x,2);
 
 %% Generate Test Cases
+
+% random data file preprocess
+file_info_cell = dir(strcat(['/', strjoin([current_file_dir(2:end-2), 'random_data'], '/')]));
+seed_numbers = [];
+for f=1:size(file_info_cell, 1)
+    if ~isempty(strfind(file_info_cell(f).name, 'ising'))
+        seed_info = strsplit(file_info_cell(f).name(1:end-4), '_');
+        seed_numbers = [seed_numbers; [str2num(cell2mat(seed_info(2))) str2num(cell2mat(seed_info(3)))]];
+    end
+end
+[~, idx] = sort(seed_numbers(:, 1));
+seed_numbers = seed_numbers(idx, :);
+func_seeds = unique(seed_numbers(:, 1));
+
+n_func = size(func_seeds, 1);
+n_runs = sum(seed_numbers(:, 1) == func_seeds(1));
 
 % setup objective functions
 inputs_all = cell(n_func, n_runs);
@@ -65,13 +82,22 @@ inputs_all = cell(n_func, n_runs);
 for t1=1:n_func
 
     fprintf('Setting up test function %d\n', t1);
+    func_seed = func_seeds(t1);
+    init_seeds = seed_numbers(seed_numbers(:, 1) == func_seed, 2);
 
     % Generate random graphical model
-    Theta   = rand_ising_grid(n_nodes);
-    Moments = ising_model_moments(Theta);
-
+%     Theta   = rand_ising_grid(n_nodes);
+%     Moments = ising_model_moments(Theta);
+    
     for t2=1:n_runs
-
+        init_seed = init_seeds(t2);
+        
+        load(strcat('/', strjoin([current_file_dir(2:end-2), 'random_data', strjoin({'ising', num2str(func_seed,'%04.f'), strcat(num2str(init_seed,'%04.f'), '.mat')}, '_')], '/')));
+        Theta = double(Theta);
+        Moments = ising_model_moments(Theta);
+        n_init = size(x_vals, 1);
+        n_vars = size(x_vals, 2);
+        
         % Set inputs struct for each problem
         inputs_all{t1,t2} = struct;
         inputs_all{t1,t2}.n_vars      = n_vars;
@@ -91,7 +117,8 @@ for t1=1:n_func
         inputs_all{t1,t2}.reg_term = @(x) reg_term(x);
 
         % Generate initial samples for statistical models
-        inputs_all{t1,t2}.x_vals = sample_models(n_init, n_vars);
+        % inputs_all{t1,t2}.x_vals = sample_models(n_init, n_vars);
+        inputs_all{t1,t2}.x_vals = double(x_vals);
         inputs_all{t1,t2}.y_vals = inputs_all{t1,t2}.model(inputs_all{t1,t2}.x_vals);
 
     end

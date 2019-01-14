@@ -4,7 +4,7 @@
 % See LICENSE.md for copyright information
 %
 
-function out = contamination_prob(x, n_samples, seed)
+function out = contamination_prob(x, n_samples, initialX, Lambda, Gamma)
 
 % Declare gamma factor (Lagrange constants)
 gamma = 1;
@@ -16,7 +16,7 @@ out = zeros(num_inputs,1);
 for i=1:num_inputs
     
     % Run contamination study
-    [cost, ~, ~, ~, constraint, ~, ~, ~] = Contamination(x(i,:)', n_samples, seed);
+    [cost, ~, ~, ~, constraint, ~, ~, ~] = Contamination(x(i,:)', n_samples, initialX, Lambda, Gamma);
 
     % Compute total output
     out(i) = cost - sum(gamma*constraint);
