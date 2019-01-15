@@ -47,37 +47,37 @@ for t=1:n_test
 
         % Run different ML optimization algorithms
         
-        if is_member('RandomSearch', implemented_algorithms)
+        if is_member('RandomSearch', algorithms)
             rnd = random_samp(objective, inputs_t); 
             fprintf('Random - Runtime: %f\n', sum(rnd.runTime));
             iSave(sprintf(save_filename_template, 'RandomSearch', t, inputs_t.lambda), rnd, inputs_t);
         end
         
-        if is_member('SimulatedAnnealing', implemented_algorithms)
+        if is_member('SimulatedAnnealing', algorithms)
             sa = simulated_annealing(objective, inputs_t);
             fprintf('SA - Runtime = %f\n', sum(sa.runTime));
             iSave(sprintf(save_filename_template, 'SimulatedAnnealing', t, inputs_t.lambda), sa, inputs_t);
         end
         
-        if is_member('ExpectedImprovement', implemented_algorithms)
+        if is_member('ExpectedImprovement', algorithms)
             bo = bayes_opt(objective, inputs_t);
             fprintf('BO - Runtime = %f\n', sum(bo.runTime));
             iSave(sprintf(save_filename_template, 'ExpectedImprovement', t, inputs_t.lambda), bo, inputs_t);
         end
         
-        if is_member('ObliviousLocalSearch', implemented_algorithms)
+        if is_member('ObliviousLocalSearch', algorithms)
             ols = local_search(objective, inputs_t);
             fprintf('OLS - Runtime = %f\n', sum(ols.runTime));
             iSave(sprintf(save_filename_template, 'ObliviousLocalSearch', t, inputs_t.lambda), ols, inputs_t);
         end
         
-        if is_member('SequentialMonteCarlo', implemented_algorithms)
+        if is_member('SequentialMonteCarlo', algorithms)
             smc = binary_smc(objective, inputs_t);
             fprintf('SMC - Runtime = %f\n', sum(smc.runTime));
             iSave(sprintf(save_filename_template, 'SequentialMonteCarlo', t, inputs_t.lambda), smc, inputs_t);
         end
         
-        if is_member('SMAC', implemented_algorithms)
+        if is_member('SMAC', algorithms)
             smac{l} = run_smac(objective, inputs_t);
             fprintf('SMAC - Runtime = %f\n', sum(smac.runTime));
             iSave(sprintf(save_filename_template, 'SMAC', t, inputs_t.lambda), smac, inputs_t);
@@ -86,25 +86,25 @@ for t=1:n_test
         % Run BOCS with Bayesian model
         inputs_t.estimator = 'bayes';
         
-%         if is_member('BOCS-SA', implemented_algorithms)
+%         if is_member('BOCS-SA', algorithms)
 %             bayes_SA1 = BOCS(inputs_t.model, penalty, inputs_t, 1, 'SA');
 %             fprintf('Bayes.SA1 - Runtime = %f\n', sum(bayes_SA1.runTime));
 %             iSave(sprintf(save_filename_template, 'BOCSorder1SA', t, inputs_t.lambda), bayes_SA1, inputs_t);
 %         end
 
-        if is_member('BOCS-SA', implemented_algorithms)
+        if is_member('BOCS-SA', algorithms)
             bayes_SA2 = BOCS(inputs_t.model, penalty, inputs_t, 2, 'SA');
             fprintf('Bayes.SA2 - Runtime = %f\n', sum(bayes_SA2.runTime));
             iSave(sprintf(save_filename_template, 'BOCSorder2SA', t, inputs_t.lambda), bayes_SA2, inputs_t);
         end
 
-%         if is_member('BOCS-SA', implemented_algorithms)
+%         if is_member('BOCS-SA', algorithms)
 %             bayes_SA3 = BOCS(inputs_t.model, penalty, inputs_t, 3, 'SA');
 %             fprintf('Bayes.SA3 - Runtime = %f\n', sum(bayes_SA3.runTime));
 %             iSave(sprintf(save_filename_template, 'BOCSorder3SA', t, inputs_t.lambda), bayes_SA3, inputs_t);
 %         end
 
-        if is_member('BOCS-SA', implemented_algorithms)
+        if is_member('BOCS-SA', algorithms)
             bayes_sdp = BOCS(inputs_t.model, penalty, inputs_t, 2, 'sdp');
             fprintf('Bayes.SDP - Runtime = %f\n', sum(bayes_sdp.runTime));
             iSave(sprintf(save_filename_template, 'BOCSorder2SDP', t, inputs_t.lambda), bayes_sdp, inputs_t);
@@ -113,25 +113,25 @@ for t=1:n_test
         % Run BOCS with MLE model
         inputs_t.estimator = 'mle';
         
-%         if is_member('BOCS-MLE', implemented_algorithms)
+%         if is_member('BOCS-MLE', algorithms)
 %             mle_SA1 = BOCS(inputs_t.model, penalty, inputs_t, 1, 'SA');
 %             fprintf('MLE.SA1 - Runtime = %f\n', sum(mle_SA1.runTime));
 %             iSave(sprintf(save_filename_template, 'MLEorder1SA', t, inputs_t.lambda), mle_SA1, inputs_t);
 %         end
 
-        if is_member('BOCS-MLE', implemented_algorithms)
+        if is_member('BOCS-MLE', algorithms)
             mle_SA2 = BOCS(inputs_t.model, penalty, inputs_t, 2, 'SA');
             fprintf('MLE.SA2 - Runtime = %f\n', sum(mle_SA2.runTime));
             iSave(sprintf(save_filename_template, 'MLEorder2SA', t, inputs_t.lambda), mle_SA2, inputs_t);
         end
 
-%         if is_member('BOCS-MLE', implemented_algorithms)
+%         if is_member('BOCS-MLE', algorithms)
 %             mle_SA3 = BOCS(inputs_t.model, penalty, inputs_t, 3, 'SA');
 %             fprintf('MLE.SA3 - Runtime = %f\n', sum(mle_SA3.runTime));
 %             iSave(sprintf(save_filename_template, 'MLEorder3SA', t, inputs_t.lambda), mle_SA3, inputs_t);
 %         end
 
-        if is_member('BOCS-MLE', implemented_algorithms)
+        if is_member('BOCS-MLE', algorithms)
             mle_sdp = BOCS(inputs_t.model, penalty, inputs_t, 2, 'sdp');
             fprintf('MLE.SDP - Runtime = %f\n', sum(mle_sdp.runTime));
             iSave(sprintf(save_filename_template, 'MLEorder2SDP', t, inputs_t.lambda), mle_sdp, inputs_t);
@@ -140,25 +140,25 @@ for t=1:n_test
         % Run BOCS with Horseshoe model
         inputs_t.estimator = 'horseshoe';
 
-%         if is_member('BOCS-HS', implemented_algorithms)
+%         if is_member('BOCS-HS', algorithms)
 %             hs_SA1 = BOCS(inputs_t.model, penalty, inputs_t, 1, 'SA');
 %             fprintf('HS.SA1 - Runtime = %f\n', sum(hs_SA1.runTime));
 %             iSave(sprintf(save_filename_template, 'HorseShoeorder1SA', t, inputs_t.lambda), hs_SA1, inputs_t);
 %         end
 
-        if is_member('BOCS-HS', implemented_algorithms)
+        if is_member('BOCS-HS', algorithms)
             hs_SA2 = BOCS(inputs_t.model, penalty, inputs_t, 2, 'SA');
             fprintf('HS.SA2 - Runtime = %f\n', sum(hs_SA2.runTime));
             iSave(sprintf(save_filename_template, 'HorseShoeorder2SA', t, inputs_t.lambda), hs_SA2, inputs_t);
         end
 
-%         if is_member('BOCS-HS', implemented_algorithms)
+%         if is_member('BOCS-HS', algorithms)
 %             hs_SA3 = BOCS(inputs_t.model, penalty, inputs_t, 3, 'SA');
 %             fprintf('HS.SA3 - Runtime = %f\n', sum(hs_SA3.runTime));
 %             iSave(sprintf(save_filename_template, 'HorseShoeorder3SA', t, inputs_t.lambda), hs_SA3, inputs_t);
 %         end
 
-        if is_member('BOCS-HS', implemented_algorithms)
+        if is_member('BOCS-HS', algorithms)
             hs_SDP = BOCS(inputs_t.model, penalty, inputs_t, 2, 'sdp');
             fprintf('HS.SDP - Runtime = %f\n', sum(hs_SDP.runTime));
             iSave(sprintf(save_filename_template, 'HorseShoeorder2SDP', t, inputs_t.lambda), hs_SDP, inputs_t);
