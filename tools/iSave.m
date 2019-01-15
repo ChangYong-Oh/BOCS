@@ -12,5 +12,5 @@ function iSave(fname, rnd, sa, bo, ols, smc, smac, bayes, mle, hs, inputs_t)
             mkdir(strjoin(dir_structure(1:i), '/'));
         end
     end
-	save(fname, 'rnd', 'sa', 'bo', 'ols', 'smc', 'smac', 'bayes', 'mle', 'hs', 'inputs_t')
+	save(fname, 'rnd', 'sa', 'bo', 'ols', 'smc', 'smac', 'bayes', 'mle', 'hs', 'inputs_t');
 end

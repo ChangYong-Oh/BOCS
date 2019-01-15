@@ -26,7 +26,7 @@
 % compared for different values of the \lambda tuning 
 % parameter.
 
-clear; close all; clc
+function [] = opt_runs_ising(algorithms)
 current_file_dir = strsplit(mfilename('fullpath'), '/');
 addpath(strcat(['/', strjoin([current_file_dir(2:end-2), 'algorithms'], '/')]));
 addpath(strcat(['/', strjoin([current_file_dir(2:end-2), 'stat_model'], '/')]));
@@ -133,6 +133,6 @@ mkdir(['../results/' test_name])
 save(['../results/' test_name '/all_tests'])
 
 % Run cases
-run_cases(inputs_all, lambda_vals, test_name, n_proc);
-
+run_cases(inputs_all, lambda_vals, test_name, n_proc, algorithms);
+end
 % -- END OF FILE --

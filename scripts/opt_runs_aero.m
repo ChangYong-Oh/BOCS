@@ -26,7 +26,7 @@
 % compared for different values of the \lambda tuning 
 % parameter.
 
-clear; close all; clc
+function [] = opt_runs_aero(algorithms)
 current_file_dir = strsplit(mfilename('fullpath'), '/');
 addpath(strcat(['/', strjoin([current_file_dir(2:end-2), 'algorithms'], '/')]));
 addpath(strcat(['/', strjoin([current_file_dir(2:end-2), 'stat_model'], '/')]));
@@ -42,8 +42,8 @@ test_name = 'aerostruct';
 
 % Number of runs and optimization iterations
 n_func     = 1;
-n_runs     = 10;
-n_init     = 20;
+% n_runs     = 10;
+% n_init     = 20;
 evalBudget = 270;
 
 % Variance prior parameters (Inverse Gamma)
@@ -121,6 +121,6 @@ mkdir(['../results/' test_name])
 save(['../results/' test_name '/all_tests'])
 
 % Run cases
-run_cases(inputs_all, lambda_vals, test_name, n_proc);
-
+run_cases(inputs_all, lambda_vals, test_name, n_proc, algorithms);
+end
 % -- END OF FILE --
