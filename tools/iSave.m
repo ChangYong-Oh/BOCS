@@ -4,7 +4,7 @@
 % See LICENSE.md for copyright information
 %
 
-function iSave(fname, rnd, sa, bo, ols, smc, smac, bayes, mle, hs, inputs_t)
+function iSave(fname, var_name1, var_name2)
     [dirname, ~, ~] = fileparts(fname);
     dir_structure = strsplit(dirname, '/')
     for i = 2:size(dir_structure, 2)
@@ -12,5 +12,5 @@ function iSave(fname, rnd, sa, bo, ols, smc, smac, bayes, mle, hs, inputs_t)
             mkdir(strjoin(dir_structure(1:i), '/'));
         end
     end
-	save(fname, 'rnd', 'sa', 'bo', 'ols', 'smc', 'smac', 'bayes', 'mle', 'hs', 'inputs_t');
+	save(fname, var_name1, var_name2);
 end
