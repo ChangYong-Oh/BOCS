@@ -78,7 +78,7 @@ for t=1:n_test
         end
         
         if is_member('SMAC', algorithms)
-            smac{l} = run_smac(objective, inputs_t);
+            smac = run_smac(objective, inputs_t);
             fprintf('SMAC - Runtime = %f\n', sum(smac.runTime));
             iSave(sprintf(save_filename_template, 'SMAC', t, inputs_t.lambda), smac, inputs_t);
         end
