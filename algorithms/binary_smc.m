@@ -143,8 +143,8 @@ end
 
 % save outputs
 output = struct;
-output.objVals  = obj_iter(1:max_eval); 
-output.optModel = model_iter(1:max_eval,:);
-output.runTime  = time_iter(1:max_eval);
+output.objVals  = obj_iter(1:min(end, max_eval)); 
+output.optModel = model_iter(1:min(end, max_eval),:);
+output.runTime  = time_iter(1:min(end, max_eval));
 
 % -- END OF FILE --

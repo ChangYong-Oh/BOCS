@@ -128,7 +128,7 @@ for t=1:n_test
         fprintf('HS.SDP - Runtime = %f\n', sum(hs.sdp{l}.runTime));
 
         % Save results
-        iSave(sprintf(['/' strjoin(current_file_dir(2:end-2), '/') '/results/' test_name '/test%d-%d.mat'], t, l), ...
+        iSave(sprintf(['/' strjoin(current_file_dir(2:end-2), '/') '/results/' test_name '/test%d-%.2E.mat'], t, inputs_t.lambda), ...
             rnd, sa, bo, ols, smc, smac, bayes, mle, hs, inputs_t);
 
     end
