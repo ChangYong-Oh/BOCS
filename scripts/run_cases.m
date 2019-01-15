@@ -35,7 +35,7 @@ for t=1:n_test
     %% Run optimization
     for l=1:length(lambda_vals)
         
-        sprintf(['On the test problem : %s\n\nTest Algorithms\n-%s'], test_name, strjoin(implemented_algorithms, '\n-'))
+        sprintf(['On the test problem : %s\n\nTest Algorithms\n-%s'], test_name, strjoin(algorithms, '\n-'))
     
         % Define objective function with penalty term
         inputs_t.lambda = lambda_vals(l);
