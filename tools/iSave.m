@@ -4,7 +4,7 @@
 % See LICENSE.md for copyright information
 %
 
-function iSave(fname, var_name1, var_name2)
+function iSave(fname, var1, var_name1, var2, var_name2)
     [dirname, ~, ~] = fileparts(fname);
     dir_structure = strsplit(dirname, '/')
     for i = 2:size(dir_structure, 2)
