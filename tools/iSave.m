@@ -4,7 +4,7 @@
 % See LICENSE.md for copyright information
 %
 
-function iSave(fname, var1, var_name1, var2, var_name2)
+function iSave(fname, model, input)
     [dirname, ~, ~] = fileparts(fname);
     dir_structure = strsplit(dirname, '/')
     for i = 2:size(dir_structure, 2)
@@ -12,5 +12,5 @@ function iSave(fname, var1, var_name1, var2, var_name2)
             mkdir(strjoin(dir_structure(1:i), '/'));
         end
     end
-	save(fname, var_name1, var_name2);
+	save(fname, 'model', 'input');
 end
