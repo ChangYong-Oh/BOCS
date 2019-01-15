@@ -13,6 +13,9 @@ function run_cases(inputs_all, lambda_vals, test_name, n_proc)
 % Find number of tests
 n_test = length(inputs_all);
 
+current_file_dir = strsplit(mfilename('fullpath'), '/');
+addpath(strcat(['/', strjoin([current_file_dir(2:end-2), 'algorithms'], '/')]));
+
 %% Parallel Problem setup
 
 % parpool(n_proc);
@@ -30,21 +33,21 @@ for t=1:n_test
     smac = cell(length(lambda_vals));
 
     bayes = struct;
-%     bayes.stSA1 = cell(length(lambda_vals));
+    bayes.stSA1 = cell(length(lambda_vals));
     bayes.stSA2 = cell(length(lambda_vals));
-%     bayes.stSA3 = cell(length(lambda_vals));
+    bayes.stSA3 = cell(length(lambda_vals));
     bayes.sdp   = cell(length(lambda_vals));
 
     mle = struct;
-%     mle.stSA1   = cell(length(lambda_vals));
+    mle.stSA1   = cell(length(lambda_vals));
     mle.stSA2   = cell(length(lambda_vals));
-%     mle.stSA3   = cell(length(lambda_vals));
+    mle.stSA3   = cell(length(lambda_vals));
     mle.sdp     = cell(length(lambda_vals));
 
     hs = struct;
-%     hs.stSA1    = cell(length(lambda_vals));
+    hs.stSA1    = cell(length(lambda_vals));
     hs.stSA2    = cell(length(lambda_vals));
-%     hs.stSA3    = cell(length(lambda_vals));
+    hs.stSA3    = cell(length(lambda_vals));
     hs.sdp      = cell(length(lambda_vals));
 
     %% Run optimization
@@ -123,7 +126,7 @@ for t=1:n_test
         fprintf('HS.SDP - Runtime = %f\n', sum(hs.sdp{l}.runTime));
 
         % Save results
-        iSave(sprintf(['../results/' test_name '/test%d.mat'], t), ...
+        iSave(sprintf(['/' strjoin(current_file_dir(2:end-2), '/') '/results/' test_name '/test%d-%d.mat'], t, l), ...
             rnd, sa, bo, ols, smc, smac, bayes, mle, hs, inputs_t);
 
     end
