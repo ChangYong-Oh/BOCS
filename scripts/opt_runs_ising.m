@@ -64,7 +64,7 @@ reg_term = @(x) sum(x,2);
 file_info_cell = dir(strcat(['/', strjoin([current_file_dir(2:end-2), 'random_data'], '/')]));
 seed_numbers = [];
 for f=1:size(file_info_cell, 1)
-    if ~isempty(strfind(file_info_cell(f).name, 'ising'))
+    if ~isempty(strfind(file_info_cell(f).name, test_name))
         seed_info = strsplit(file_info_cell(f).name(1:end-4), '_');
         seed_numbers = [seed_numbers; [str2num(cell2mat(seed_info(2))) str2num(cell2mat(seed_info(3)))]];
     end
@@ -92,7 +92,7 @@ for t1=1:n_func
     for t2=1:n_runs
         init_seed = init_seeds(t2);
         
-        load(strcat('/', strjoin([current_file_dir(2:end-2), 'random_data', strjoin({'ising', num2str(func_seed,'%04.f'), strcat(num2str(init_seed,'%04.f'), '.mat')}, '_')], '/')));
+        load(strcat('/', strjoin([current_file_dir(2:end-2), 'random_data', strjoin({test_name, num2str(func_seed,'%04.f'), strcat(num2str(init_seed,'%04.f'), '.mat')}, '_')], '/')));
         Theta = double(Theta);
         Moments = ising_model_moments(Theta);
         n_init = size(x_vals, 1);

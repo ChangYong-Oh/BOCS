@@ -42,12 +42,14 @@ Moments = ising_model_moments(Theta);
 % Save objective function and regularization term
 inputs.model    = @(x) KL_divergence_ising(Theta, Moments, x);
 inputs.penalty  = @(x) inputs.lambda*sum(x,2);
+objective = @(x) inputs.model(x) + inputs.penalty(x);
 
 % Generate initial samples for statistical models
 inputs.x_vals   = sample_models(inputs.n_init, inputs.n_vars);
 inputs.y_vals   = inputs.model(inputs.x_vals);
 
 % Run BOCS-SDP and BOCS-SA (order 2)
+% smac = run_smac(objective, inputs);
 B_SA  = BOCS(inputs.model, inputs.penalty, inputs, 2, 'SA');
 B_SDP = BOCS(inputs.model, inputs.penalty, inputs, 2, 'sdp');
 

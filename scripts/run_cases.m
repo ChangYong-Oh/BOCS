@@ -15,8 +15,8 @@ n_test = length(inputs_all);
 
 %% Parallel Problem setup
 
-parpool(n_proc);
-parfor t=1:n_test    
+% parpool(n_proc);
+for t=1:n_test    
 
     % Set test inputs struct
     inputs_t = inputs_all{t};
@@ -30,21 +30,21 @@ parfor t=1:n_test
     smac = cell(length(lambda_vals));
 
     bayes = struct;
-    bayes.stSA1 = cell(length(lambda_vals));
+%     bayes.stSA1 = cell(length(lambda_vals));
     bayes.stSA2 = cell(length(lambda_vals));
-    bayes.stSA3 = cell(length(lambda_vals));
+%     bayes.stSA3 = cell(length(lambda_vals));
     bayes.sdp   = cell(length(lambda_vals));
 
     mle = struct;
-    mle.stSA1   = cell(length(lambda_vals));
+%     mle.stSA1   = cell(length(lambda_vals));
     mle.stSA2   = cell(length(lambda_vals));
-    mle.stSA3   = cell(length(lambda_vals));
+%     mle.stSA3   = cell(length(lambda_vals));
     mle.sdp     = cell(length(lambda_vals));
 
     hs = struct;
-    hs.stSA1    = cell(length(lambda_vals));
+%     hs.stSA1    = cell(length(lambda_vals));
     hs.stSA2    = cell(length(lambda_vals));
-    hs.stSA3    = cell(length(lambda_vals));
+%     hs.stSA3    = cell(length(lambda_vals));
     hs.sdp      = cell(length(lambda_vals));
 
     %% Run optimization
@@ -80,14 +80,14 @@ parfor t=1:n_test
         % Run BOCS with Bayesian model
         inputs_t.estimator = 'bayes';
 
-        bayes.stSA1{l} = BOCS(inputs_t.model, penalty, inputs_t, 1, 'SA');
-        fprintf('Bayes.SA1 - Runtime = %f\n', sum(bayes.stSA1{l}.runTime));
+%         bayes.stSA1{l} = BOCS(inputs_t.model, penalty, inputs_t, 1, 'SA');
+%         fprintf('Bayes.SA1 - Runtime = %f\n', sum(bayes.stSA1{l}.runTime));
 
         bayes.stSA2{l} = BOCS(inputs_t.model, penalty, inputs_t, 2, 'SA');
         fprintf('Bayes.SA2 - Runtime = %f\n', sum(bayes.stSA2{l}.runTime));
 
-        bayes.stSA3{l} = BOCS(inputs_t.model, penalty, inputs_t, 3, 'SA');
-        fprintf('Bayes.SA3 - Runtime = %f\n', sum(bayes.stSA3{l}.runTime));
+%         bayes.stSA3{l} = BOCS(inputs_t.model, penalty, inputs_t, 3, 'SA');
+%         fprintf('Bayes.SA3 - Runtime = %f\n', sum(bayes.stSA3{l}.runTime));
 
         bayes.sdp{l} = BOCS(inputs_t.model, penalty, inputs_t, 2, 'sdp');
         fprintf('Bayes.SDP - Runtime = %f\n', sum(bayes.sdp{l}.runTime));
@@ -95,14 +95,14 @@ parfor t=1:n_test
         % Run BOCS with MLE model
         inputs_t.estimator = 'mle';
 
-        mle.stSA1{l} = BOCS(inputs_t.model, penalty, inputs_t, 1, 'SA');
-        fprintf('MLE.SA1 - Runtime = %f\n', sum(mle.stSA1{l}.runTime));
+%         mle.stSA1{l} = BOCS(inputs_t.model, penalty, inputs_t, 1, 'SA');
+%         fprintf('MLE.SA1 - Runtime = %f\n', sum(mle.stSA1{l}.runTime));
 
         mle.stSA2{l} = BOCS(inputs_t.model, penalty, inputs_t, 2, 'SA');
         fprintf('MLE.SA2 - Runtime = %f\n', sum(mle.stSA2{l}.runTime));
 
-        mle.stSA3{l} = BOCS(inputs_t.model, penalty, inputs_t, 3, 'SA');
-        fprintf('MLE.SA3 - Runtime = %f\n', sum(mle.stSA3{l}.runTime));
+%         mle.stSA3{l} = BOCS(inputs_t.model, penalty, inputs_t, 3, 'SA');
+%         fprintf('MLE.SA3 - Runtime = %f\n', sum(mle.stSA3{l}.runTime));
 
         mle.sdp{l} = BOCS(inputs_t.model, penalty, inputs_t, 2, 'sdp');
         fprintf('MLE.SDP - Runtime = %f\n', sum(mle.sdp{l}.runTime));
@@ -110,14 +110,14 @@ parfor t=1:n_test
         % Run BOCS with Horseshoe model
         inputs_t.estimator = 'horseshoe';
 
-        hs.stSA1{l} = BOCS(inputs_t.model, penalty, inputs_t, 1, 'SA');
-        fprintf('HS.SA1 - Runtime = %f\n', sum(hs.stSA1{l}.runTime));
+%         hs.stSA1{l} = BOCS(inputs_t.model, penalty, inputs_t, 1, 'SA');
+%         fprintf('HS.SA1 - Runtime = %f\n', sum(hs.stSA1{l}.runTime));
 
         hs.stSA2{l} = BOCS(inputs_t.model, penalty, inputs_t, 2, 'SA');
         fprintf('HS.SA2 - Runtime = %f\n', sum(hs.stSA2{l}.runTime));
 
-        hs.stSA3{l} = BOCS(inputs_t.model, penalty, inputs_t, 3, 'SA');
-        fprintf('HS.SA3 - Runtime = %f\n', sum(hs.stSA3{l}.runTime));
+%         hs.stSA3{l} = BOCS(inputs_t.model, penalty, inputs_t, 3, 'SA');
+%         fprintf('HS.SA3 - Runtime = %f\n', sum(hs.stSA3{l}.runTime));
 
         hs.sdp{l} = BOCS(inputs_t.model, penalty, inputs_t, 2, 'sdp');
         fprintf('HS.SDP - Runtime = %f\n', sum(hs.sdp{l}.runTime));
