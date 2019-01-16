@@ -92,7 +92,7 @@ for t=1:n_test
 %             iSave(sprintf(save_filename_template, 'BOCSorder1SA', t, inputs_t.lambda), bayes_SA1, inputs_t);
 %         end
 
-        if is_member('BOCS-SA', algorithms)
+        if is_member('BOCS-Bayes', algorithms)
             bayes_SA2 = BOCS(inputs_t.model, penalty, inputs_t, 2, 'SA');
             fprintf('Bayes.SA2 - Runtime = %f\n', sum(bayes_SA2.runTime));
             iSave(sprintf(save_filename_template, 'BOCSorder2SA', t, inputs_t.lambda), bayes_SA2, inputs_t);
@@ -104,7 +104,7 @@ for t=1:n_test
 %             iSave(sprintf(save_filename_template, 'BOCSorder3SA', t, inputs_t.lambda), bayes_SA3, inputs_t);
 %         end
 
-        if is_member('BOCS-SA', algorithms)
+        if is_member('BOCS-Bayes', algorithms)
             bayes_sdp = BOCS(inputs_t.model, penalty, inputs_t, 2, 'sdp');
             fprintf('Bayes.SDP - Runtime = %f\n', sum(bayes_sdp.runTime));
             iSave(sprintf(save_filename_template, 'BOCSorder2SDP', t, inputs_t.lambda), bayes_sdp, inputs_t);
