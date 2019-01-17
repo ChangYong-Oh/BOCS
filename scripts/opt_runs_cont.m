@@ -85,7 +85,7 @@ for t1=1:n_func
 
     fprintf('Setting up test function %d\n', t1);
     func_seed = func_seeds(t1);
-    init_seeds = seed_numbers(seed_numbers(:, 1) == func_seed, 2);
+    init_seeds = sort(seed_numbers(seed_numbers(:, 1) == func_seed, 2));
 
     % Generate random case study
     % seed = randi(10000,1);
@@ -94,7 +94,8 @@ for t1=1:n_func
     for t2=1:n_runs
         init_seed = init_seeds(t2);
         
-        load(strcat('/', strjoin([current_file_dir(2:end-2), 'random_data', strjoin({test_name, num2str(func_seed,'%04.f'), strcat(num2str(init_seed,'%04.f'), '.mat')}, '_')], '/')));
+        data_file_name = strjoin({test_name, num2str(func_seed,'%04.f'), strcat(num2str(init_seed,'%04.f'), '.mat')}, '_');
+        load(strcat('/', strjoin([current_file_dir(2:end-2), 'random_data', data_file_name], '/')));
         initialX = double(initialX);
         Lambda = double(Lambda);
         Gamma = double(Gamma);
@@ -123,7 +124,7 @@ for t1=1:n_func
         % inputs_all{t1,t2}.x_vals = sample_models(n_init, n_vars);
         inputs_all{t1,t2}.x_vals = double(x_vals);
         inputs_all{t1,t2}.y_vals = inputs_all{t1,t2}.model(inputs_all{t1,t2}.x_vals);
-
+        
     end
 end
 

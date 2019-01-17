@@ -51,8 +51,8 @@ aPr    = 2;
 bPr    = 1;
 
 % Regularization parameters
-lambda_vals = [0, 1e-4, 1e-2];
-lambda_str  = {'0', '1em4', '1em2'};
+lambda_vals = [1e-2];
+lambda_str  = {'1em2'};
 
 % Set additive regularization function
 reg_term = @(x) sum(x,2);
@@ -81,9 +81,10 @@ for t1=1:n_func
     fprintf('Setting up test function %d\n', t1);
 
     for t2=1:n_runs
-        init_seed = init_seeds(t2);
+        init_seed = seed_numbers(t2);
         
-        load(strcat('/', strjoin([current_file_dir(2:end-2), 'random_data', strjoin({test_name, num2str(func_seed,'%04.f'), strcat(num2str(init_seed,'%04.f'), '.mat')}, '_')], '/')));
+        data_file_name = strjoin({test_name, strcat(num2str(init_seed,'%04.f'), '.mat')}, '_');
+        load(strcat('/', strjoin([current_file_dir(2:end-2), 'random_data', data_file_name], '/')));
         n_init = size(x_vals, 1);
         n_vars = size(x_vals, 2);
 
@@ -102,7 +103,8 @@ for t1=1:n_func
         inputs_all{t1,t2}.bPr         = bPr;
 
         % Save objective function and regularization term
-        inputs_all{t1,t2}.model = @(x) KL_decoupled_models(x);
+        % Set upper limit to remove insanely large number
+        inputs_all{t1,t2}.model = @(x) min(KL_decoupled_models(x), 1000);
         inputs_all{t1,t2}.reg_term = @(x) reg_term(x);
 
         % Generate initial samples for statistical models

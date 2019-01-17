@@ -1,4 +1,10 @@
 function [data1, data2, data3] = summary_group_files(model_name, dir_name)
+    bocs_naming = bocs_model_names();
+    if ~any(strcmp(bocs_naming, model_name))
+        sprintf(['----------------\n%s'], strjoin(bocs_naming, '\n'));
+        error('Wrong model name')
+    end
+
 	filename_list = dir(dir_name);
 	dir_name = filename_list(1).folder;
 	group1 = {};
@@ -28,7 +34,8 @@ function [group_evals] = collect_evals(file_names, dir_name, model_name)
 	load(strjoin([dir_name, file_names(1)], '/'), 'inputs_t');
 	inputs = eval('inputs_t');
 	n_eval = inputs.evalBudget;
-
+    n_init = inputs.n_init;
+    
 	baseline_models = {'rnd', 'sa', 'bo', 'ols', 'smc', 'smac'};
 	bocs_variants = {'bayes-sa', 'mle-sa', 'hs-sa', 'bayes-sdp', 'mle-sdp', 'hs-sdp'};
 
@@ -59,6 +66,25 @@ function [group_evals] = collect_evals(file_names, dir_name, model_name)
 			error('Wrong model_name')
 		end
 		evals = model{1,1}.objVals;
-		group_evals = [group_evals, evals];
+        min_evals = zeros(size(evals));
+        for i=1:numel(evals)
+           min_evals(i, 1) = min(evals(1:i, 1)); 
+        end
+		group_evals = [group_evals, data_check(min_evals, n_eval, n_init, model_name)];
 	end
+end
+
+function [processed_eval] = data_check(evaluation, n_eval, n_init, model_name)
+    type_full = {'rnd', 'sa', 'bo', 'ols', 'smac'};
+    type_bocs = {'bayes-sa', 'bayes-sdp', 'mle-sdp', 'mle-sa', 'hs-sdp', 'hs-sa'};
+    if any(strcmp(model_name, type_full))
+        processed_eval = evaluation(1:n_eval, 1);
+    elseif any(strcmp(model_name, type_bocs))
+        processed_eval = [zeros(n_init, 1); evaluation(1:(n_eval - n_init), 1)];
+    elseif strcmp(model_name, 'smc')
+        n_eval_smc = numel(evaluation);
+        processed_eval = [evaluation; evaluation(end, 1) * ones(n_eval - n_eval_smc, 1)];
+    else
+        error('Error')
+    end
 end

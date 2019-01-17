@@ -83,7 +83,7 @@ for t1=1:n_func
 
     fprintf('Setting up test function %d\n', t1);
     func_seed = func_seeds(t1);
-    init_seeds = seed_numbers(seed_numbers(:, 1) == func_seed, 2);
+    init_seeds = sort(seed_numbers(seed_numbers(:, 1) == func_seed, 2));
 
     % Generate random graphical model
 %     Theta   = rand_ising_grid(n_nodes);
@@ -92,7 +92,8 @@ for t1=1:n_func
     for t2=1:n_runs
         init_seed = init_seeds(t2);
         
-        load(strcat('/', strjoin([current_file_dir(2:end-2), 'random_data', strjoin({test_name, num2str(func_seed,'%04.f'), strcat(num2str(init_seed,'%04.f'), '.mat')}, '_')], '/')));
+        data_file_name = strjoin({test_name, num2str(func_seed,'%04.f'), strcat(num2str(init_seed,'%04.f'), '.mat')}, '_');
+        load(strcat('/', strjoin([current_file_dir(2:end-2), 'random_data', data_file_name], '/')));
         Theta = double(Theta);
         Moments = ising_model_moments(Theta);
         n_init = size(x_vals, 1);

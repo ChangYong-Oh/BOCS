@@ -13,6 +13,9 @@ end
 % Declare vector to store model_kl
 model_kl = zeros(n_models,1);
 
+current_file_dir = strsplit(mfilename('fullpath'), '/');
+execution_file_path = strjoin(current_file_dir(1:end-1), '/');
+
 for i=1:n_models
 
 	% Save model
@@ -22,7 +25,7 @@ for i=1:n_models
 	save('dec_models.mat','model_loads','model_mesh');
 
 	% Evaluate KL Divergence for each model based on Gaussian linearization
-	command_str = 'python aerostruct_lin_model.py';
+	command_str = ['python ', execution_file_path, '/aerostruct_lin_model.py'];
 	[status, err] = system(command_str);
 
 	% Check that run was successful

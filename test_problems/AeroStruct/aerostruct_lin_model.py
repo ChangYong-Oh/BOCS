@@ -339,20 +339,20 @@ def model_stats(output, dy_dx, rand_cov, qoi_idx):
 
     # Assemble covariance matrix for original model
     model_cov = np.dot(np.dot(dy_dx,rand_cov),dy_dx.T)
-
+    
     # Extract mean and covariance for specified qoi
     qoi_array  = np.array(qoi_idx)
     model_mean = model_mean[qoi_array]
     model_cov  = model_cov[qoi_array,:][:,qoi_array]
-
+    
     return (model_mean, model_cov)
 
 
-def linearize_model(ref_data, fixed_inputs, qoi):
+def linearize_model(ref_data, fixed_inputs, qoi, rand_inputs):
 
     # Collect output vals and derivatives of aerostruct model
     (out_vals, dy_dx, out_vars) = model_output(ref_data, fixed_inputs)
-
+    
     # Find input covariance matrix
     cov_mat = input_cov(rand_inputs)
 
@@ -597,7 +597,7 @@ if __name__ == '__main__':
 
     # Setup rand_inputs, fixed_inputs
     (rand_inputs, ref_fixed_inputs) = setup_model(ref_model_params, ref_model_loads, ref_model_mesh)
-
+    
     # Check if refence model exists before running it
     if os.path.isfile("ref_model_output.p"):
         ref_data = pickle.load(open("ref_model_output.p","r"))
@@ -605,8 +605,8 @@ if __name__ == '__main__':
         ref_data = aerostruct_linear(rand_inputs, ref_fixed_inputs)
 
     # Compute mean and covaraince of reference aerostruct model
-    (ref_mean, ref_cov) = linearize_model(ref_data, ref_fixed_inputs, qoi)
-
+    (ref_mean, ref_cov) = linearize_model(ref_data, ref_fixed_inputs, qoi, rand_inputs)
+    print(ref_data['dR_dy'])
     # Load decoupled model from file
     dec_models = sio.loadmat('dec_models.mat')
     model_loads = dec_models['model_loads'][0]
@@ -617,7 +617,7 @@ if __name__ == '__main__':
     (_, act_fixed_inputs) = setup_model(act_model_params, model_loads, model_mesh)
 
     # Compute mean and covaraince of decoupled aerostruct model
-    (dec_mean, dec_cov) = linearize_model(ref_data, act_fixed_inputs, qoi)
+    (dec_mean, dec_cov) = linearize_model(ref_data, act_fixed_inputs, qoi, rand_inputs)
 
     # Evaluate KL divergence
     kl_value = kldiv_mvn(ref_mean, dec_mean, ref_cov, dec_cov)
