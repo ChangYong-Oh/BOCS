@@ -25,11 +25,19 @@ function [data1, data2, data3] = summary_individual_files(model_name, dir_name)
             end
         end
     end
-    
+    data1 = [];
+    data2 = [];
+    data3 = [];
 	% 0.0, 1e-4, 1e-2
-	data1 = collect_evals(group1, dir_name);
-	data2 = collect_evals(group2, dir_name);
-	data3 = collect_evals(group3, dir_name);
+    if numel(group1) > 0
+        data1 = collect_evals(group1, dir_name);
+    end
+    if numel(group2) > 0
+        data2 = collect_evals(group2, dir_name);
+    end
+    if numel(group3) > 0
+        data3 = collect_evals(group3, dir_name);
+    end
 end
 
 function [evaluations] = extract_evalautions(file_name, dir_name)
@@ -51,7 +59,7 @@ function [group_evals] = collect_evals(file_names, dir_name)
            min_evaluation(i, 1) = min(evaluation(1:i, 1)); 
         end
         group_evals(1:end, j) = data_check(min_evaluation, n_eval, n_init, file_names{j});
-	end
+    end
 end
 
 function [processed_eval] = data_check(evaluation, n_eval, n_init, file_name)

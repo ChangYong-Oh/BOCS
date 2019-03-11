@@ -24,54 +24,58 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from BOCSpy.BOCS import BOCS
-from BOCSpy.quad_mat import quad_mat
-from BOCSpy.sample_models import sample_models
+from BOCSpy.binary_categorical import HighOrderBinary
+from BOCSpy.experiment_configuration import generate_random_seed_pair_highorderbinary
+
+n_variables = 20
+order = 3
+random_seed_config = 1
+n_eval = 2
+
+
+random_seed_pair = generate_random_seed_pair_highorderbinary()
+assert 1 <= random_seed_config <= 25
+case_seed = sorted(list(random_seed_pair.keys()))[(random_seed_config - 1) // 5]
+init_seed = sorted(random_seed_pair[case_seed])[(random_seed_config - 1) % 5]
+print(case_seed, init_seed)
 
 # Save inputs in dictionary
 inputs = {}
-inputs['n_vars']     = 10
-inputs['evalBudget'] = 11
-inputs['n_init']     = 10
-inputs['lambda']     = 1e-4
+inputs['n_vars']     = n_variables
+inputs['lambda']     = 0
 
 # Save objective function and regularization term
-Q = quad_mat(inputs['n_vars'], 10)
-inputs['model']    = lambda x: (x.dot(Q)*x).sum(axis=1) # compute x^TQx row-wise
-inputs['penalty']  = lambda x: inputs['lambda']*np.sum(x,axis=1)
+objective = HighOrderBinary(n_variables=inputs['n_vars'], highest_order=order, random_seed_pair=(case_seed, init_seed))
+inputs['n_init']     = objective.suggested_init.size(0)
+inputs['evalBudget'] = inputs['n_init'] + n_eval
+inputs['model']      = lambda x: objective.evaluate(x)
+inputs['penalty']    = lambda x: 0
 
 # Generate initial samples for statistical models
-inputs['x_vals']   = sample_models(inputs['n_init'], inputs['n_vars'])
-inputs['y_vals']   = inputs['model'](inputs['x_vals'])
+inputs['x_vals']   = objective.suggested_init.numpy()
+inputs['y_vals']   = inputs['model'](inputs['x_vals']) + inputs['penalty'](inputs['x_vals']) * inputs['lambda']
 
-# Run BOCS-SA and BOCS-SDP (order 2)
-(BOCS_SA_model, BOCS_SA_obj)   = BOCS(inputs.copy(), 2, 'SA')
-(BOCS_SDP_model, BOCS_SDP_obj) = BOCS(inputs.copy(), 2, 'SDP-l1')
+# Run BOCS-SA
+BOCS_SA_model, BOCS_SA_obj, BOCS_SA_time = BOCS(inputs.copy(), order, 'SA')
+
 
 # Compute optimal value found by BOCS
 iter_t = np.arange(BOCS_SA_obj.size)
 BOCS_SA_opt  = np.minimum.accumulate(BOCS_SA_obj)
-BOCS_SDP_opt = np.minimum.accumulate(BOCS_SDP_obj)
 
-# Compute minimum of objective function
-n_models = 2**inputs['n_vars']
-x_vals = np.zeros((n_models, inputs['n_vars']))
-str_format = '{0:0' + str(inputs['n_vars']) + 'b}'
-for i in range(n_models):
-	model = str_format.format(i)
-	x_vals[i,:] = np.array([int(b) for b in model])
-f_vals = inputs['model'](x_vals) + inputs['penalty'](x_vals)
-opt_f  = np.min(f_vals)
+
+print(BOCS_SA_model)
+print(BOCS_SA_obj)
+print(BOCS_SA_opt)
+
 
 # Plot results
 fig = plt.figure()
 ax  = fig.add_subplot(1,1,1)
-ax.plot(iter_t, np.abs(BOCS_SA_opt - opt_f), color='r', label='BOCS-SA')
-ax.plot(iter_t, np.abs(BOCS_SDP_opt - opt_f), color='b', label='BOCS-SDP')
-ax.set_yscale('log')
+ax.plot(iter_t, BOCS_SA_opt, color='r', label='BOCS-SA')
 ax.set_xlabel('$t$')
 ax.set_ylabel('Best $f(x)$')
 ax.legend()
-fig.savefig('BOCS_simpleregret.pdf')
-plt.close(fig)
+plt.show()
 
 # -- END OF FILE --

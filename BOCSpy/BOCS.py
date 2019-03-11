@@ -3,12 +3,13 @@
 #
 # See LICENSE.md for copyright information
 #
-
+import time
 import numpy as np
 import cvxpy as cvx
 from itertools import combinations
-from LinReg import LinReg
-from sample_models import sample_models
+from BOCSpy.LinReg import LinReg
+from BOCSpy.sample_models import sample_models
+
 
 def BOCS(inputs, order, acquisitionFn):
 	# BOCS: Function runs binary optimization using simulated annealing on
@@ -37,14 +38,18 @@ def BOCS(inputs, order, acquisitionFn):
 
 	# Find number of iterations based on total budget
 	n_init = inputs['x_vals'].shape[0]
-	n_iter = inputs['evalBudget'] - n_init
+	n_iter = inputs['evalBudget']
 
 	# Declare vector to store results
 	model_iter = np.zeros((n_iter, n_vars))
 	obj_iter   = np.zeros(n_iter)
+	time_iter = np.zeros(n_iter)
+	model_iter[:n_init] = inputs['x_vals']
+	obj_iter[:n_init] = inputs['y_vals']
 
-	for t in range(n_iter):
-
+	for t in range(n_init, n_iter):
+		processing_time = 0
+		start_time = time.time()
 		# Draw alpha vector
 		alpha_t = LR.alpha
 
@@ -71,6 +76,8 @@ def BOCS(inputs, order, acquisitionFn):
 			x_new, _ = sdp_relaxation(alpha_t, inputs)
 		else:
 			raise NotImplementedError
+		elaped_time = time.time() - start_time
+		processing_time += elaped_time
 
 		# evaluate model objective at new evaluation point
 		x_new = x_new.reshape((1,n_vars))
@@ -81,14 +88,22 @@ def BOCS(inputs, order, acquisitionFn):
 		inputs['y_vals'] = np.hstack((inputs['y_vals'], y_new))
 		inputs['init_cond'] = x_new
 
+		start_time = time.time()
+
 		# re-train linear model
 		LR.train(inputs)
+
+		elaped_time = time.time() - start_time
+		processing_time += elaped_time
 
 		# Save results for optimal model
 		model_iter[t,:] = x_new
 		obj_iter[t]		= y_new + penalty(x_new)
+		time_iter[t]    = processing_time
 
-	return (model_iter, obj_iter)
+		print('%3d-th evaluation : %12.8f (%12.8f seconds)' % (t + 1, obj_iter[t], processing_time))
+
+	return model_iter, obj_iter, time_iter
 
 
 def simulated_annealing(objective, inputs):
@@ -165,7 +180,7 @@ def sdp_relaxation(alpha, inputs):
 
 	# check number of coefficients
 	if a.size != n_idx:
-	    raise ValueError('Number of Coefficients does not match indices!')
+		raise ValueError('Number of Coefficients does not match indices!')
 
 	# Convert a to matrix form
 	A = np.zeros((n_vars,n_vars))
